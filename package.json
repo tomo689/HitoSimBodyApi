@@ -1,0 +1,27 @@
+{
+  "name": "hitosim-body-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "人体デジタルツイン iPhone アプリ向けバックエンド API (Cloudflare Workers + NestJS)",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "npm run build && wrangler dev",
+    "deploy": "npm run build && wrangler deploy",
+    "types": "wrangler types",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@mridang/nestjs-platform-cloudflare": "^1.2.0",
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/core": "^11.0.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.0.1",
+    "typescript": "^5.8.3",
+    "wrangler": "^4.22.0"
+  }
+}

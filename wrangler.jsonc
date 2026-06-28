@@ -1,0 +1,19 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "hitosim-body-api",
+  "main": "dist/main.js",
+  "compatibility_date": "2026-06-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true
+  },
+  "secrets": {
+    "required": ["API_KEY", "OPENAI_API_KEY"]
+  },
+  "alias": {
+    "@nestjs/microservices": "./src/stubs/empty.ts",
+    "@nestjs/microservices/microservices-module": "./src/stubs/empty.ts",
+    "@nestjs/websockets/socket-module": "./src/stubs/empty.ts",
+    "@nestjs/platform-express": "./src/stubs/empty.ts"
+  }
+}

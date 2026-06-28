@@ -1,0 +1,8 @@
+# ローカル開発用。コピーして .dev.vars を作成してください。
+# cp .dev.vars.example .dev.vars
+
+# クライアントがリクエスト時に送信する API キー（X-API-Key ヘッダー）
+API_KEY=your-client-api-key
+
+# OpenAI API キー
+OPENAI_API_KEY=sk-your-openai-api-key
