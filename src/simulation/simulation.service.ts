@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { runOrganSimulation } from '../organs/simulation-engine.js';
+import { deriveBloodState } from '../organs/analysis/blood-state.js';
+import { computeInsights } from '../organs/analysis/insights.js';
+import { buildOrganVisualization } from '../organs/analysis/visualization.js';
+import { computeWeakPoints } from '../organs/analysis/weak-points.js';
 import type { UserProfile } from '../organs/parameters/types.js';
+import { healthMetricsToInputs } from '../health/health-mapper.js';
 import {
   SimulateRequestDto,
   SimulateResponseDto,
@@ -23,6 +28,11 @@ export class SimulationService {
       organName: o.name,
     }));
 
+    const mergedInputs = [
+      ...request.inputs,
+      ...healthMetricsToInputs(request.healthMetrics),
+    ];
+
     const defaults = this.parameterResolver.buildDefaults(
       userProfile,
       organRefs,
@@ -33,7 +43,7 @@ export class SimulationService {
         userProfile,
         request.purpose,
         organRefs,
-        request.inputs,
+        mergedInputs,
         defaults,
       );
 
@@ -41,10 +51,30 @@ export class SimulationService {
       timescale: request.timescale,
       userProfile,
       parameters,
-      inputs: request.inputs,
+      inputs: mergedInputs,
       organs: organRefs,
       outputs: request.outputs,
     });
+
+    const weakPoints = computeWeakPoints(
+      result.outputs,
+      result.organEntries,
+      result.context,
+      request.purpose,
+    );
+
+    const insight = computeInsights(
+      request.purpose,
+      result.outputs,
+      result.organEntries,
+      result.context,
+      weakPoints,
+    );
+
+    const blood = deriveBloodState(
+      result.organEntries,
+      result.context.labels,
+    );
 
     return {
       purpose: request.purpose,
@@ -69,7 +99,16 @@ export class SimulationService {
         functionLevel: o.functionLevel,
         metrics: o.metrics,
         summary: o.summary,
+        timeSeries: o.timeSeries,
+        visualization: buildOrganVisualization({
+          ...o,
+          organId: o.organId,
+          organName: o.organName,
+        }),
       })),
+      blood,
+      weakPoints,
+      insight,
       unresolvedOrgans: result.unresolvedOrgans,
     };
   }

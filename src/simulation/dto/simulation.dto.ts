@@ -2,6 +2,7 @@ import { Type } from 'class-transformer';
 import {
   IsArray,
   IsEnum,
+  IsInt,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -62,6 +63,40 @@ class AdditionalDataDto {
   @IsNotEmpty()
   @MaxLength(500)
   value!: string;
+}
+
+export class HealthMetricsDto {
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  steps?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  activeEnergyKcal?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Max(24)
+  sleepHours?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(40)
+  @Max(200)
+  restingHeartRate?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  hrvSdnn?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  workoutMinutes?: number;
 }
 
 export class UserProfileDto {
@@ -131,6 +166,52 @@ export class SimulateRequestDto {
   @ValidateNested({ each: true })
   @Type(() => OrganRefDto)
   organs!: OrganRefDto[];
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => HealthMetricsDto)
+  healthMetrics?: HealthMetricsDto;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(5)
+  mood?: 1 | 2 | 3 | 4 | 5;
+}
+
+export class OrganVisualizationDto {
+  status!: 'healthy' | 'strained' | 'critical';
+  primaryMetric!: string;
+  bottleneckScore!: number;
+}
+
+export class WeakPointDto {
+  outputId!: string;
+  outputName!: string;
+  severity!: 'low' | 'medium' | 'high';
+  reason!: string;
+  contributingOrganIds!: string[];
+}
+
+export class InsightCausalLinkDto {
+  organ!: string;
+  organId!: string;
+  mechanism!: string;
+  evidenceMetric!: string;
+}
+
+export class SimulationInsightDto {
+  headline!: string;
+  explanation!: string;
+  causalChain!: InsightCausalLinkDto[];
+  references!: string[];
+}
+
+export class BloodStateDto {
+  functionLevel!: number;
+  metrics!: { name: string; value: number; unit: string }[];
+  timeSeries!: { label: string; value: number }[];
+  summary!: string;
 }
 
 export class SimulateResponseDto {
@@ -155,7 +236,12 @@ export class SimulateResponseDto {
     functionLevel: number;
     metrics: { name: string; value: number; unit: string }[];
     summary: string;
+    timeSeries: { label: string; value: number }[];
+    visualization: OrganVisualizationDto;
   }[];
+  blood!: BloodStateDto;
+  weakPoints!: WeakPointDto[];
+  insight?: SimulationInsightDto;
   modelsUsed?: string[];
   unresolvedOrgans?: string[];
 }

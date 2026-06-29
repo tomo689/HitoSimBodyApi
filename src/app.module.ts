@@ -1,6 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ApiKeyGuard } from './auth/api-key.guard.js';
+import { CounselorController } from './counselor/counselor.controller.js';
+import { CounselorService } from './counselor/counselor.service.js';
 import { EnvService } from './config/env.service.js';
+import { HealthController } from './health/health.controller.js';
+import { HealthService } from './health/health.service.js';
 import { OpenAiService } from './openai/openai.service.js';
 import { PurposeController } from './purpose/purpose.controller.js';
 import { PurposeService } from './purpose/purpose.service.js';
@@ -18,6 +22,8 @@ import { ParameterResolverService } from './simulation/parameter-resolver.servic
     SimulationController,
     RecommendationsController,
     ReferenceController,
+    CounselorController,
+    HealthController,
   ],
   providers: [
     EnvService,
@@ -27,6 +33,8 @@ import { ParameterResolverService } from './simulation/parameter-resolver.servic
     ParameterResolverService,
     RecommendationsService,
     ReferenceService,
+    CounselorService,
+    HealthService,
   ],
 })
 export class AppModule {}

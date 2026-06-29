@@ -4,11 +4,29 @@ import {
   IsEnum,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   MaxLength,
   ValidateNested,
 } from 'class-validator';
 import type { Timescale } from '../../common/types.js';
+import {
+  UserProfileDto,
+  WeakPointDto,
+} from '../../simulation/dto/simulation.dto.js';
+
+class InputItemDto {
+  @IsString()
+  @IsNotEmpty()
+  name!: string;
+
+  @IsNumber()
+  value!: number;
+
+  @IsString()
+  @IsNotEmpty()
+  unit!: string;
+}
 
 class SimulationOutputDto {
   @IsString()
@@ -70,6 +88,32 @@ export class RecommendationsRequestDto {
   @ValidateNested({ each: true })
   @Type(() => SimulationOrganDto)
   organs!: SimulationOrganDto[];
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => UserProfileDto)
+  userProfile?: UserProfileDto;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => InputItemDto)
+  inputs?: InputItemDto[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => WeakPointDto)
+  weakPoints?: WeakPointDto[];
+
+  @IsOptional()
+  @IsString()
+  parameterRationale?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  modelsUsed?: string[];
 }
 
 export class RecommendationsResponseDto {
@@ -80,5 +124,6 @@ export class RecommendationsResponseDto {
     expectedImpact: string;
     targetOutputs: string[];
     priority: number;
+    evidence?: { modelKey: string; paperId?: string }[];
   }[];
 }

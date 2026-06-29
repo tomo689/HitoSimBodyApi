@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { OpenAiService } from '../openai/openai.service.js';
 import { PurposeResponseDto } from './dto/purpose.dto.js';
+import { validateAndNormalizePurpose } from './purpose-validator.js';
 
 const SYSTEM_PROMPT = `あなたは人体デジタルツインの専門家です。
 ユーザーの健康・フィットネス目的に基づき、以下を JSON で返してください。
@@ -40,10 +41,6 @@ export class PurposeService {
       organs: PurposeResponseDto['organs'];
     }>(SYSTEM_PROMPT, `ユーザーの目的: ${purpose}`);
 
-    return {
-      purpose,
-      outputs: result.outputs,
-      organs: result.organs,
-    };
+    return validateAndNormalizePurpose(purpose, result);
   }
 }

@@ -1,3 +1,4 @@
+import { applyOrganCoupling } from './coupling-graph.js';
 import { mapOutputsFromOrgans, type OrganResultEntry } from './output-mapper.js';
 import { resolveOrganModel } from './registry.js';
 import type { SimulationContext } from './types.js';
@@ -22,16 +23,20 @@ export interface SimulationEngineRequest {
   outputs: { id: string; name: string; unit: string }[];
 }
 
+export interface SimulationEngineOrganResult {
+  organId: string;
+  organName: string;
+  modelKey: string;
+  functionLevel: number;
+  metrics: { name: string; value: number; unit: string }[];
+  summary: string;
+  timeSeries: { label: string; value: number }[];
+}
+
 export interface SimulationEngineResult {
   context: SimulationContext;
-  organs: {
-    organId: string;
-    organName: string;
-    modelKey: string;
-    functionLevel: number;
-    metrics: { name: string; value: number; unit: string }[];
-    summary: string;
-  }[];
+  organEntries: OrganResultEntry[];
+  organs: SimulationEngineOrganResult[];
   outputs: ReturnType<typeof mapOutputsFromOrgans>;
   modelsUsed: string[];
   unresolvedOrgans: string[];
@@ -84,6 +89,8 @@ export function runOrganSimulation(
     modelsUsed.push(simulated.modelKey);
   }
 
+  applyOrganCoupling(organResults, context);
+
   const mappedOutputs = mapOutputsFromOrgans(
     request.outputs,
     organResults,
@@ -95,15 +102,19 @@ export function runOrganSimulation(
     uniqueOrgans.set(entry.organId, entry);
   }
 
+  const organEntries = [...uniqueOrgans.values()];
+
   return {
     context,
-    organs: [...uniqueOrgans.values()].map((r) => ({
+    organEntries,
+    organs: organEntries.map((r) => ({
       organId: r.organId,
       organName: r.organName,
       modelKey: r.modelKey,
       functionLevel: r.functionLevel,
       metrics: r.metrics,
       summary: r.summary,
+      timeSeries: r.timeSeries,
     })),
     outputs: mappedOutputs,
     modelsUsed: [...new Set(modelsUsed)],
