@@ -1,4 +1,5 @@
 import { adiposeTissueModel } from './models/adipose-tissue.model.js';
+import { bloodModel } from './models/blood.model.js';
 import { brainModel } from './models/brain.model.js';
 import { heartModel } from './models/heart.model.js';
 import { kidneyModel } from './models/kidney.model.js';
@@ -17,6 +18,7 @@ export const ORGAN_MODELS: OrganModel[] = [
   skeletalMuscleModel,
   brainModel,
   adiposeTissueModel,
+  bloodModel,
 ];
 
 const aliasIndex = new Map<string, OrganModel>();

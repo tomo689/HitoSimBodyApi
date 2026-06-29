@@ -1,5 +1,6 @@
 import type {
   AdiposeTissueParameters,
+  BloodParameters,
   BrainParameters,
   HeartParameters,
   KidneyParameters,
@@ -131,6 +132,19 @@ export function buildDefaultParameters(
         };
         break;
       }
+      case 'blood': {
+        const hct =
+          profile.gender === 'female'
+            ? clamp(38 + (age - 30) * 0.02, 34, 44)
+            : clamp(42 + (age - 30) * 0.02, 38, 50);
+        params.blood = {
+          baselineHematocrit: hct,
+          baselineHemoglobin: clamp(hct * 0.34, 11, 17),
+          totalBloodVolume: clamp(weight * 0.075, 4, 6.5),
+          baselineGlucose: clamp(90 + (age - 40) * 0.3, 75, 110),
+        };
+        break;
+      }
     }
   }
 
@@ -214,6 +228,15 @@ function clampAdipose(p: Partial<AdiposeTissueParameters>): Partial<AdiposeTissu
   };
 }
 
+function clampBlood(p: Partial<BloodParameters>): Partial<BloodParameters> {
+  return {
+    baselineHematocrit: num(p.baselineHematocrit, 30, 55),
+    baselineHemoglobin: num(p.baselineHemoglobin, 9, 18),
+    totalBloodVolume: num(p.totalBloodVolume, 3, 7),
+    baselineGlucose: num(p.baselineGlucose, 70, 140),
+  };
+}
+
 function num(v: number | undefined, min: number, max: number): number | undefined {
   return v !== undefined ? clamp(v, min, max) : undefined;
 }
@@ -256,5 +279,9 @@ export function mergeParameters(
       defaults.adipose_tissue && aiParams.adipose_tissue
         ? mergePartial(defaults.adipose_tissue, clampAdipose(aiParams.adipose_tissue))
         : defaults.adipose_tissue,
+    blood:
+      defaults.blood && aiParams.blood
+        ? mergePartial(defaults.blood, clampBlood(aiParams.blood))
+        : defaults.blood,
   };
 }

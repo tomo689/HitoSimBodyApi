@@ -40,12 +40,27 @@ export interface OrganModelResult {
   summary: string;
 }
 
+import type { CoupledStepState } from './shared-state.js';
+import type { SimulationSharedState } from './shared-state.js';
+
 /** 臓器モデルインターフェース */
 export interface OrganModel {
   readonly key: string;
   readonly nameJa: string;
   readonly aliases: string[];
-  simulate(context: SimulationContext): OrganModelResult;
+  readonly supportsCoupling?: boolean;
+  simulate(
+    context: SimulationContext,
+    options?: {
+      stepValues?: number[];
+      sharedStateHistory?: SimulationSharedState[];
+    },
+  ): OrganModelResult;
+  coupledStep?(
+    context: SimulationContext,
+    step: number,
+    state: CoupledStepState,
+  ): number;
 }
 
 export const DEFAULT_INPUTS: NormalizedInputs = {

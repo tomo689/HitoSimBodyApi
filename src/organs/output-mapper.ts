@@ -29,6 +29,12 @@ const OUTPUT_SOURCE_MAP: Record<
   mental_clarity: { organKey: 'brain', useTimeSeries: true },
   energy_level: { organKey: 'brain', useTimeSeries: true },
   weight: { organKey: 'adipose_tissue', useTimeSeries: true },
+  hematocrit: { organKey: 'blood', metricName: 'ヘマトクリット' },
+  hemoglobin: { organKey: 'blood', metricName: 'ヘモグロビン' },
+  spo2: { organKey: 'blood', metricName: 'SpO2' },
+  oxygen_saturation: { organKey: 'blood', metricName: 'SpO2' },
+  blood_health: { organKey: 'blood', useTimeSeries: true },
+  circulation: { organKey: 'blood', useTimeSeries: true },
 };
 
 function findSource(outputId: string, outputName: string) {
@@ -46,6 +52,7 @@ function findSource(outputId: string, outputName: string) {
 export type OrganResultEntry = OrganModelResult & {
   organId: string;
   organName: string;
+  isDefaultOrgan?: boolean;
 };
 
 export interface MappedOutput {
