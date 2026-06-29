@@ -207,6 +207,10 @@ Authorization: Bearer <your-api-key>
 3. POST /recommendations → シミュレーション結果からアクション提案
 ```
 
+## シミュレーションアルゴリズム
+
+シミュレーションの実行フロー・タイムスケール・臓器別数理モデル・設計上の制約については **[docs/SIMULATION_ALGORITHM.md](docs/SIMULATION_ALGORITHM.md)** を参照してください。
+
 ## 臓器モデル (`src/organs/`)
 
 | 臓器 | modelKey | 数理モデル |
