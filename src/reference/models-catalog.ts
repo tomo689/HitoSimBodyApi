@@ -319,6 +319,26 @@ export const MATHEMATICAL_MODELS: MathematicalModelReference[] = [
     ],
     paperIds: ['hall_2011_lancet', 'hall_2012_ajcn', 'roy_parker_2006'],
   },
+  {
+    modelKey: 'blood_gas_transport',
+    organKey: 'blood',
+    organNameJa: '血液',
+    modelName: 'Blood Gas Transport Model',
+    modelNameJa: '血液ガス輸送モデル',
+    equations: [
+      'SpO₂ = f(VO₂, CO)',
+      'Hct = Hct₀ / (V_fluid / V_fluid₀)',
+      'G_blood = G_pancreas (結合状態)',
+    ],
+    description:
+      '心臓・肺・腎臓・膵臓の結合状態から、循環血糖・ヘマトクリット・酸素飽和度を統合する血液モデル。AI 選定に関わらず常に実行される。',
+    parameters: [
+      { symbol: 'Hct₀', meaning: 'ベースラインヘマトクリット', typicalValue: '38–50 %' },
+      { symbol: 'Hb₀', meaning: 'ベースラインヘモグロビン', typicalValue: '12–16 g/dL' },
+      { symbol: 'V_blood', meaning: '血液量', typicalValue: '4–6 L' },
+    ],
+    paperIds: ['keener_sneyd_2009'],
+  },
 ];
 
 export interface ModelCatalogEntry extends MathematicalModelReference {

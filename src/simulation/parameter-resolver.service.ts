@@ -9,6 +9,7 @@ import type {
   OrganParametersMap,
   UserProfile,
 } from '../organs/parameters/types.js';
+import { ALWAYS_SIMULATE_ORGAN_KEYS } from '../organs/default-organs.js';
 import { resolveOrganModel } from '../organs/registry.js';
 
 const SYSTEM_PROMPT = `あなたは Mathematical Medicine の専門家です。
@@ -61,6 +62,12 @@ const SYSTEM_PROMPT = `あなたは Mathematical Medicine の専門家です。
       "initialFatMass": number,
       "baselineCalorieIntake": number,
       "baselineCalorieExpenditure": number
+    },
+    "blood": {
+      "baselineHematocrit": number,
+      "baselineHemoglobin": number,
+      "totalBloodVolume": number,
+      "baselineGlucose": number
     }
   },
   "rationale": "パラメータ決定の簡潔な根拠（日本語）"
@@ -139,7 +146,7 @@ export class ParameterResolverService {
   private collectOrganKeys(
     organs: { organId: string; organName: string }[],
   ): OrganParameterKey[] {
-    const keys = new Set<OrganParameterKey>();
+    const keys = new Set<OrganParameterKey>([...ALWAYS_SIMULATE_ORGAN_KEYS]);
     for (const organ of organs) {
       const model = resolveOrganModel(organ.organId, organ.organName);
       if (model) {
@@ -179,6 +186,9 @@ export class ParameterResolverService {
           break;
         case 'adipose_tissue':
           if (params.adipose_tissue) filtered.adipose_tissue = params.adipose_tissue;
+          break;
+        case 'blood':
+          if (params.blood) filtered.blood = params.blood;
           break;
       }
     }

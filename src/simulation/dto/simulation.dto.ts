@@ -155,7 +155,9 @@ export class SimulateResponseDto {
     functionLevel: number;
     metrics: { name: string; value: number; unit: string }[];
     summary: string;
+    isDefaultOrgan?: boolean;
   }[];
   modelsUsed?: string[];
   unresolvedOrgans?: string[];
+  couplingEnabled?: boolean;
 }

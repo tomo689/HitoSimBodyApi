@@ -99,6 +99,9 @@ Authorization: Bearer <your-api-key>
 1. 年齢・性別・体格等からデフォルトパラメータを算出
 2. OpenAI がユーザーデータをもとに個人化パラメータを推定（失敗時はデフォルトを使用）
 3. 普遍定数（大気圧、FiO2、脂肪エネルギー密度 7700 kcal/kg 等）は `src/organs/constants.ts` に固定
+4. **血液（`blood`）は AI 選定に関わらず常にシミュレーション**（`isDefaultOrgan: true` で返却）
+
+**臓器間フィードバック**: 心臓→腎臓（MAP）、膵臓↔肝臓（血糖・インスリン・HGP）、骨格筋→膵臓（グルコース取り込み）、肺・心臓→血液（酸素輸送）など、結合ステップで状態を共有します。レスポンスの `couplingEnabled: true` で有効化を確認できます。
 
 **タイムスケール**: `hourly` | `daily` | `weekly` | `monthly`
 

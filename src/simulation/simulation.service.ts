@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { runOrganSimulation } from '../organs/simulation-engine.js';
+import { ensureDefaultOrgans } from '../organs/default-organs.js';
 import type { UserProfile } from '../organs/parameters/types.js';
 import {
   SimulateRequestDto,
@@ -18,10 +19,12 @@ export class SimulationService {
     request: SimulateRequestDto,
   ): Promise<SimulateResponseDto> {
     const userProfile = this.toUserProfile(request.userProfile);
-    const organRefs = request.organs.map((o) => ({
-      organId: o.id,
-      organName: o.name,
-    }));
+    const organRefs = ensureDefaultOrgans(
+      request.organs.map((o) => ({
+        organId: o.id,
+        organName: o.name,
+      })),
+    );
 
     const defaults = this.parameterResolver.buildDefaults(
       userProfile,
@@ -69,8 +72,10 @@ export class SimulationService {
         functionLevel: o.functionLevel,
         metrics: o.metrics,
         summary: o.summary,
+        isDefaultOrgan: o.isDefaultOrgan,
       })),
       unresolvedOrgans: result.unresolvedOrgans,
+      couplingEnabled: result.couplingEnabled,
     };
   }
 

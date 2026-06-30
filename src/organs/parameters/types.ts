@@ -61,6 +61,13 @@ export interface AdiposeTissueParameters {
   baselineCalorieExpenditure: number;
 }
 
+export interface BloodParameters {
+  baselineHematocrit: number;
+  baselineHemoglobin: number;
+  totalBloodVolume: number;
+  baselineGlucose: number;
+}
+
 /** 臓器ごとの個人化パラメータ */
 export interface OrganParametersMap {
   heart?: HeartParameters;
@@ -71,6 +78,7 @@ export interface OrganParametersMap {
   skeletal_muscle?: SkeletalMuscleParameters;
   brain?: BrainParameters;
   adipose_tissue?: AdiposeTissueParameters;
+  blood?: BloodParameters;
 }
 
 export type OrganParameterKey = keyof OrganParametersMap;
