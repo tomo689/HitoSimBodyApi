@@ -16,7 +16,8 @@ const SYSTEM_PROMPT = `あなたは人体デジタルツインの健康コーチ
       "description": "具体的な行動内容と実践方法",
       "expectedImpact": "このアクションがもたらす期待される効果",
       "targetOutputs": ["改善が期待されるアウトプット id の配列"],
-      "priority": 1
+      "priority": 1,
+      "evidence": [{ "modelKey": "hall_energy_balance", "paperId": "optional" }]
     }
   ]
 }
@@ -24,9 +25,11 @@ const SYSTEM_PROMPT = `あなたは人体デジタルツインの健康コーチ
 制約:
 - recommendations は必ず 3 件
 - priority は 1（最優先）から 3 の整数
+- weakPoints 配列が含まれる場合は、severity が high の項目を最優先で対処する提案にすること
 - シミュレーション結果の weak point を踏まえた実行可能な提案にすること
 - 医学的に安全で現実的な内容にすること
-- 日本語で記述すること`;
+- 日本語で記述すること
+- 各 recommendation に evidence 配列（modelKey と paperId）を含めること`;
 
 @Injectable()
 export class RecommendationsService {
@@ -43,7 +46,12 @@ export class RecommendationsService {
 
     return {
       purpose: request.purpose,
-      recommendations: result.recommendations,
+      recommendations: result.recommendations.map((rec) => ({
+        ...rec,
+        evidence: rec.evidence ?? request.modelsUsed?.map((key) => ({
+          modelKey: key,
+        })),
+      })),
     };
   }
 }

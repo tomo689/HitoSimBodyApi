@@ -26,17 +26,21 @@ export interface SimulationEngineRequest {
   outputs: { id: string; name: string; unit: string }[];
 }
 
+export interface SimulationEngineOrganResult {
+  organId: string;
+  organName: string;
+  modelKey: string;
+  functionLevel: number;
+  metrics: { name: string; value: number; unit: string }[];
+  summary: string;
+  timeSeries: { label: string; value: number }[];
+  isDefaultOrgan?: boolean;
+}
+
 export interface SimulationEngineResult {
   context: SimulationContext;
-  organs: {
-    organId: string;
-    organName: string;
-    modelKey: string;
-    functionLevel: number;
-    metrics: { name: string; value: number; unit: string }[];
-    summary: string;
-    isDefaultOrgan?: boolean;
-  }[];
+  organEntries: OrganResultEntry[];
+  organs: SimulationEngineOrganResult[];
   outputs: ReturnType<typeof mapOutputsFromOrgans>;
   modelsUsed: string[];
   unresolvedOrgans: string[];
@@ -140,15 +144,19 @@ export function runOrganSimulation(
     uniqueOrgans.set(entry.organId, entry);
   }
 
+  const organEntries = [...uniqueOrgans.values()];
+
   return {
     context,
-    organs: [...uniqueOrgans.values()].map((r) => ({
+    organEntries,
+    organs: organEntries.map((r) => ({
       organId: r.organId,
       organName: r.organName,
       modelKey: r.modelKey,
       functionLevel: r.functionLevel,
       metrics: r.metrics,
       summary: r.summary,
+      timeSeries: r.timeSeries,
       isDefaultOrgan: r.isDefaultOrgan,
     })),
     outputs: mappedOutputs,
